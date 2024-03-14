@@ -1,119 +1,22 @@
-// "use client";
-
-// import {
-// 	DropdownMenu,
-// 	DropdownMenuContent,
-// 	DropdownMenuItem,
-// 	DropdownMenuLabel,
-// 	DropdownMenuSeparator,
-// 	DropdownMenuTrigger,
-// } from "@radix-ui/react-dropdown-menu";
-
-// import { Button } from "@/components/ui/button";
-// import { Checkbox } from "@radix-ui/react-checkbox";
-// import { ColumnDef } from "@tanstack/react-table";
-
-// export type Payment = {
-// 	id: string;
-// 	amount: number;
-// 	status: "pending" | "processing" | "success" | "failed";
-// 	email: string;
-// };
-
-// export const columns: ColumnDef<Payment>[] = [
-// 	{
-// 		id: "select",
-// 		header: ({ table }) => (
-// 			<Checkbox
-// 				checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-// 				onCheckedChange={(value: any) => table.toggleAllPageRowsSelected(!!value)}
-// 				aria-label="Select all"
-// 			/>
-// 		),
-// 		cell: ({ row }) => (
-// 			<Checkbox
-// 				checked={row.getIsSelected()}
-// 				onCheckedChange={(value: any) => row.toggleSelected(!!value)}
-// 				aria-label="Select row"
-// 			/>
-// 		),
-// 		enableSorting: false,
-// 		enableHiding: false,
-// 	},
-// 	{
-// 		accessorKey: "status",
-// 		header: "Status",
-// 		cell: ({ row }) => <div className="capitalize">{row.getValue("status")}</div>,
-// 	},
-// 	{
-// 		accessorKey: "email",
-// 		header: ({ column }) => {
-// 			return (
-// 				<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-// 					Email
-// 				</Button>
-// 			);
-// 		},
-// 		cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
-// 	},
-// 	{
-// 		accessorKey: "amount",
-// 		header: () => <div className="text-right">Amount</div>,
-// 		cell: ({ row }) => {
-// 			const amount = parseFloat(row.getValue("amount"));
-
-// 			const formatted = new Intl.NumberFormat("en-US", {
-// 				style: "currency",
-// 				currency: "USD",
-// 			}).format(amount);
-
-// 			return <div className="text-right font-medium">{formatted}</div>;
-// 		},
-// 	},
-// 	{
-// 		id: "actions",
-// 		enableHiding: false,
-// 		cell: ({ row }) => {
-// 			const payment = row.original;
-
-// 			return (
-// 				<DropdownMenu>
-// 					<DropdownMenuTrigger asChild>
-// 						<Button variant="ghost" className="h-8 w-8 p-0">
-// 							<span className="sr-only">Open menu</span>
-// 						</Button>
-// 					</DropdownMenuTrigger>
-// 					<DropdownMenuContent align="end">
-// 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-// 						<DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
-// 							Copy payment ID
-// 						</DropdownMenuItem>
-// 						<DropdownMenuSeparator />
-// 						<DropdownMenuItem>View customer</DropdownMenuItem>
-// 						<DropdownMenuItem>View payment details</DropdownMenuItem>
-// 					</DropdownMenuContent>
-// 				</DropdownMenu>
-// 			);
-// 		},
-// 	},
-// ];
-
 "use client";
 
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { Empty, Filled, Half } from "../Assets/Stars.tsx";
+import { Empty, Filled, Half } from "../Assets/SVG/Stars.tsx";
+import { Menu, SortArrow } from "../Assets/SVG/Icons.tsx";
 
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card.tsx";
 import { ColumnDef } from "@tanstack/react-table";
+import { Modal } from "@/Form/Modal.tsx";
+import Toast from "@/Form/Toast.tsx";
+import { data } from "./DataTable.tsx";
 
-export type Payment = {
+export type Books = {
 	id: string;
 	name: string;
 	author: string;
@@ -124,13 +27,18 @@ export type Payment = {
 	rating?: string;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Books>[] = [
+	{
+		accessorKey: "id",
+		header: "N°",
+		cell: ({ row }) => <div className="capitalize text-slate-400">{row.getValue("id")}</div>,
+	},
 	{
 		accessorKey: "cover",
 		header: "Portada",
 		cell: ({ row }) => (
 			<div className="capitalize">
-				<img src={`./src/Assets/${row.getValue("cover")}`} alt="Portada-del-libro" width={"100px"} />
+				<img src={`./src/Assets/Covers/${row.getValue("cover")}`} alt="Portada-del-libro" width={"100px"} />
 			</div>
 		),
 	},
@@ -143,12 +51,16 @@ export const columns: ColumnDef<Payment>[] = [
 		accessorKey: "author",
 		header: ({ column }) => {
 			return (
-				<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-					Autor
+				<Button
+					className="flex font-medium gap-2 pl-4"
+					variant="ghost"
+					onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+				>
+					Autor <SortArrow />
 				</Button>
 			);
 		},
-		cell: ({ row }) => <div className="capitalize">{row.getValue("author")}</div>,
+		cell: ({ row }) => <div className="capitalize pl-4">{row.getValue("author")}</div>,
 	},
 	{
 		accessorKey: "genre",
@@ -167,12 +79,16 @@ export const columns: ColumnDef<Payment>[] = [
 	},
 	{
 		accessorKey: "rating",
-		header: () => <div className="text-right">Valoración</div>,
+		header: ({ column }) => (
+			<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+				Valoración
+			</Button>
+		),
 		cell: ({ row }) => {
-			const amount = parseFloat(row.getValue("rating")) || 0;
+			const amount = parseFloat(row.getValue("rating")) || parseFloat("0.0");
 			const icon = amount < 3.5 ? <Empty /> : amount < 4.5 ? <Half /> : <Filled />;
 			return (
-				<div className="flex text-right font-medium gap-2">
+				<div className="flex text-right font-medium gap-2 pl-4">
 					{amount}
 					{icon}
 				</div>
@@ -183,23 +99,48 @@ export const columns: ColumnDef<Payment>[] = [
 		id: "actions",
 		enableHiding: false,
 		cell: ({ row }) => {
-			const payment = row.original;
-
+			const books = row.original;
+			const handleDelete = (id: string) => {
+				var index = data
+					.map(function (e) {
+						return e.id;
+					})
+					.indexOf(id);
+				data.splice(index, 1);
+			};
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
-						<Button variant="ghost" className="h-8 w-8 p-0">
-							<span className="sr-only">Open menu</span>
+						<Button variant="ghost" className="h-10 w-10 p-0">
+							<Menu />
 						</Button>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
-							Copy payment ID
-						</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>View customer</DropdownMenuItem>
-						<DropdownMenuItem>View payment details</DropdownMenuItem>
+					<DropdownMenuContent align="end" className="z-10">
+						<Card className="outline outline-slate-300 outline-1 outline-offset-0">
+							<DropdownMenuItem onClick={() => navigator.clipboard.writeText(books.name)} className="mt-4 mx-4">
+								<Toast trigger="Copiar título del libro" title="¡Título copiado con éxito!" action_bool={false}></Toast>
+							</DropdownMenuItem>
+							<hr className="h-px mx-4 w-auto text-center bg-gray-700 border-0 m-1" />
+
+							<DropdownMenuItem onClick={() => handleDelete(books.id)} className="mx-4">
+								<Toast
+									trigger="Eliminar"
+									title="¡Libro eliminado con éxito!"
+									action_bool={true}
+									action_message="Deshacer"
+								/>
+							</DropdownMenuItem>
+
+							<Modal
+								title={"Editar Libro"}
+								description={
+									"Por favor, actualice la información del libro. Asegúrese de rellenar todos los datos necesarios para garantizar la exactitud."
+								}
+								submit={"Confirmar"}
+								value={"Editar"}
+								classname={"mx-4 mb-4 p-1 cursor-pointer hover:bg-slate-200/60"}
+							/>
+						</Card>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);

@@ -6,11 +6,11 @@ export function Gmail() {
 			width="32"
 			height="32"
 			viewBox="0 0 24 24"
-			stroke-width="1.5"
+			strokeWidth="1.5"
 			stroke="currentColor"
 			fill="none"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		>
 			<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 			<path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" />
@@ -26,11 +26,11 @@ export function Instagram() {
 			width="32"
 			height="32"
 			viewBox="0 0 24 24"
-			stroke-width="1.5"
+			strokeWidth="1.5"
 			stroke="currentColor"
 			fill="none"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		>
 			<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 			<path d="M4 4m0 4a4 4 0 0 1 4 -4h8a4 4 0 0 1 4 4v8a4 4 0 0 1 -4 4h-8a4 4 0 0 1 -4 -4z" />
@@ -47,11 +47,11 @@ export function X() {
 			width="32"
 			height="32"
 			viewBox="0 0 24 24"
-			stroke-width="1.5"
+			strokeWidth="1.5"
 			stroke="currentColor"
 			fill="none"
-			stroke-linecap="round"
-			stroke-linejoin="round"
+			strokeLinecap="round"
+			strokeLinejoin="round"
 		>
 			<path stroke="none" d="M0 0h24v24H0z" fill="none" />
 			<path d="M4 4l11.733 16h4.267l-11.733 -16z" />

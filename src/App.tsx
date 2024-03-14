@@ -1,6 +1,9 @@
-import { Gmail, Instagram, X } from "../public/Redes";
+"use client";
+
+import { Gmail, Instagram, X } from "./Assets/SVG/Redes";
 
 import Table from "./Table/DataTable";
+import { Toaster } from "./components/ui/toaster";
 
 export default function App() {
 	return (
@@ -24,6 +27,7 @@ export default function App() {
 						Libros que cambian vidas. Historias que te marcarán...
 					</h1>
 					<Table />
+					<Toaster />
 				</section>
 				<footer className="relative flex flex-col bg-black/15 backdrop-blur-sm gap-4 w-full bottom-0 h-[40vh]">
 					<div className="flex justify-between content-center px-12 mt-4">

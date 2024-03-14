@@ -30,7 +30,7 @@
   },
   "include": [
     "src",
-    "public/Redes.tsx"
+    "src/Assets/SVG/Redes.tsx"
   ],
   "references": [
     {
