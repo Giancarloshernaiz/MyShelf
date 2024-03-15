@@ -12,7 +12,7 @@ import { Menu, SortArrow } from "../Assets/SVG/Icons.tsx";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card.tsx";
 import { ColumnDef } from "@tanstack/react-table";
-import { Modal } from "@/Form/Modal.tsx";
+import Modal from "@/Form/Modal.tsx";
 import Toast from "@/Form/Toast.tsx";
 import { data } from "./DataTable.tsx";
 

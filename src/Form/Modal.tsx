@@ -1,4 +1,3 @@
-import { BookRegisterSchema, mappedAuthors } from "../Validators/auth";
 import {
 	Dialog,
 	DialogContent,
@@ -8,7 +7,9 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 
+import { BookRegisterSchema } from "../Validators/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "@/Assets/SVG/Icons";
@@ -33,7 +34,7 @@ type Inputs = {
 	rating: string;
 };
 
-export function Modal({ title, description, submit, value, classname }: Props) {
+export default function Modal({ title, description, submit, value, classname }: Props) {
 	const {
 		register,
 		handleSubmit,
@@ -42,69 +43,16 @@ export function Modal({ title, description, submit, value, classname }: Props) {
 		resolver: zodResolver(BookRegisterSchema),
 	});
 
-	const authors = Object.entries(mappedAuthors).map(([value]) => (
-		<div className="flex mt-8 items-center gap-4">
-			<div>
-				<label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="first-name">
-					{value}
-				</label>
-				<div className="mt-2">
-					<Input
-						type="text"
-						id="first-name"
-						autoComplete="given-name"
-						className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-						{...register("author.0")}
-					/>
-				</div>
-			</div>
-
-			<div>
-				<label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="last-name">
-					{value}
-				</label>
-				<div className="mt-2">
-					<Input
-						type="text"
-						id="last-name"
-						autoComplete="family-name"
-						className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-						{...register("author.1")}
-					/>
-				</div>
-			</div>
-			<div>
-				<label htmlFor="birth-date" className="block text-sm font-medium leading-6 text-gray-900">
-					{value}
-				</label>
-				<div className="mt-2">
-					<Input
-						id="birth-date"
-						type="date"
-						autoComplete="birth-date"
-						className=" w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-						{...register("author.2")}
-					/>
-				</div>
-			</div>
-			<div>
-				<label htmlFor="death-date" className="block text-sm font-medium leading-6 text-gray-900">
-					{value}
-				</label>
-				<div className="mt-2">
-					<Input
-						id="death-date"
-						type="date"
-						autoComplete="death-date"
-						className=" w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-						{...register("author.3")}
-					/>
-				</div>
-			</div>
-		</div>
-	));
-
 	console.log(errors);
+
+	const [selectedImage, setSelectedImage]: any = useState(null);
+	const [imageUrl, setImageUrl]: any = useState(null);
+
+	useEffect(() => {
+		if (selectedImage) {
+			setImageUrl(URL.createObjectURL(selectedImage));
+		}
+	}, [selectedImage]);
 
 	const onSubmit: SubmitHandler<Inputs> = (data) => {
 		console.log(data);
@@ -148,7 +96,12 @@ export function Modal({ title, description, submit, value, classname }: Props) {
 														<span>Subir un archivo o arrastra y suelta aquí</span>
 													</label>
 													<p className="text-xs leading-5 text-gray-600">PNG, JPG, GIF hasta 10MB</p>
-													<Input id="file" type="file" className="not-sr-only m-2" {...register("cover")} />
+													<Input
+														accept="image/*"
+														type="file"
+														onChange={(e: any) => setSelectedImage(e.target.files[0])}
+													/>
+													{imageUrl && <img src={imageUrl} alt="Selected" height="50px" />}
 												</div>
 											</div>
 										</div>
@@ -245,9 +198,6 @@ export function Modal({ title, description, submit, value, classname }: Props) {
 											className="flex justify-center items-center mt-2"
 											onClick={() => {
 												console.log("A");
-												{
-													authors;
-												}
 											}}
 										>
 											<Plus dimensions={32} />
