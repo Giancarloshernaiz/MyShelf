@@ -7,7 +7,7 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "@/Assets/SVG/Icons";
@@ -31,6 +31,8 @@ export default function Modal({ title, description, submit, value, classname, ic
 	const [imageUrl, setImageUrl]: any = useState(null);
 	const [error, setError]:any = useState(false);
 
+	const formRef = useRef(null);
+
 	useEffect(() => {
 		if (selectedImage) {
 			setImageUrl(URL.createObjectURL(selectedImage));
@@ -48,7 +50,6 @@ export default function Modal({ title, description, submit, value, classname, ic
 	const onSubmit = (data:any) => {
 
 		if (data.birthDate === ''){
-			alert(data.birthDate)
 			return setError(true);
 		}
 
@@ -64,7 +65,7 @@ export default function Modal({ title, description, submit, value, classname, ic
 			fecha_publicacion: data.publishDate
 		}
 		instance.post('/libros', data).then((res) => { setError(false); actualizar();}).catch((err) => {console.log(err);setError(true)})
-
+		formRef.current.reset();
 	};
 
 	return (
@@ -81,7 +82,7 @@ export default function Modal({ title, description, submit, value, classname, ic
 					<DialogDescription className="flex-1 text-pretty">{description}</DialogDescription>
 				</DialogHeader>
 				<ScrollArea>
-					<form onSubmit={handleSubmit(onSubmit)}>
+					<form onSubmit={handleSubmit(onSubmit)} ref={formRef}>
 						<div className="flex flex-col flex-wrap justify-center content-center text-pretty text-center  space-y-12">
 							<div className="border-b border-gray-900/10 pb-12">
 								<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -201,13 +202,6 @@ export default function Modal({ title, description, submit, value, classname, ic
 												{...register("deathDate")}
 											/>
 										</div>
-									</div>
-
-									<div className="mx-4">
-										<label className="block text-sm font-medium leading-6 text-gray-900">Agregar autor</label>
-										<button type="button" className="flex justify-center items-center mt-2">
-											<Plus dimensions={32} />
-										</button>
 									</div>
 								</div>
 							</div>

@@ -21,12 +21,14 @@ export default function ToastWithAction({ book, trigger, title, description, act
 
 	const createBook = (book: any) => {
 		instance.post("/libros", book).then((response) => {
+			console.log(response)
 			actualizar()
 		});
 	};
 
 	const deleteBook = (id: string) => {
-		instance.delete(`/libros/${id}`).then((response) => {
+		instance.delete(`/libros/${id}`).then((response:any) => {
+			console.log(response)
 			actualizar()
 		});
 	
