@@ -63,8 +63,6 @@ export default function Modal({ title, description, submit, value, classname, ic
 		resolver: zodResolver(BookRegisterSchema),
 	});
 
-	console.log(errors);
-
 	const [selectedImage, setSelectedImage]: any = useState(null);
 	const [imageUrl, setImageUrl]: any = useState(null);
 
@@ -76,6 +74,7 @@ export default function Modal({ title, description, submit, value, classname, ic
 
 	const onSubmit: SubmitHandler<z.infer<typeof BookRegisterSchema>> = (data) => {
 		console.log(data);
+		alert('Submit')
 	};
 
 	return (

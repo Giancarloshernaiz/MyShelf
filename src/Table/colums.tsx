@@ -15,15 +15,16 @@ import { ColumnDef } from "@tanstack/react-table";
 import Modal from "@/Form/Modal.tsx";
 import Toast from "@/Form/Toast.tsx";
 
+
 export type Books = {
-	id: string;
-	name: string;
-	author: string;
-	genre: string;
-	date: string;
-	publisher: string;
-	cover: string;
-	rating?: string;
+	id: number;
+	titulo: string;
+	autores: string;
+	genero: string;
+	fecha_publicacion: string;
+	//editorial: string;
+	imagen: string;
+	calificacion: string;
 };
 
 export const columns: ColumnDef<Books>[] = [
@@ -33,21 +34,21 @@ export const columns: ColumnDef<Books>[] = [
 		cell: ({ row }) => <div className="capitalize text-slate-400">{row.getValue("id")}</div>,
 	},
 	{
-		accessorKey: "cover",
+		accessorKey: "imagen",
 		header: "Portada",
 		cell: ({ row }) => (
 			<div className="capitalize">
-				<img src={`./src/Assets/Covers/${row.getValue("cover")}`} alt="Portada-del-libro" width={"100px"} />
+				<img src={`./src/Assets/Covers/${row.getValue("imagen")}`} alt="Portada-del-libro" width={"100px"} />
 			</div>
 		),
 	},
 	{
-		accessorKey: "name",
+		accessorKey: "titulo",
 		header: "Nombre",
-		cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
+		cell: ({ row }) => <div className="capitalize">{row.getValue("titulo")}</div>,
 	},
 	{
-		accessorKey: "author",
+		accessorKey: "autores",
 		header: ({ column }) => {
 			return (
 				<Button
@@ -59,32 +60,32 @@ export const columns: ColumnDef<Books>[] = [
 				</Button>
 			);
 		},
-		cell: ({ row }) => <div className="capitalize pl-4">{row.getValue("author")}</div>,
+		cell: ({ row }) => <div className="capitalize pl-4">{row.getValue("autores")}</div>,
 	},
 	{
-		accessorKey: "genre",
+		accessorKey: "genero",
 		header: "Género",
-		cell: ({ row }) => <div className="capitalize">{row.getValue("genre")}</div>,
+		cell: ({ row }) => <div className="capitalize">{row.getValue("genero")}</div>,
 	},
 	{
-		accessorKey: "date",
+		accessorKey: "fecha_publicacion",
 		header: "Fecha de publicación",
-		cell: ({ row }) => <div className="capitalize">{row.getValue("date")}</div>,
+		cell: ({ row }) => <div className="capitalize">{row.getValue("fecha_publicacion")}</div>,
 	},
-	{
-		accessorKey: "publisher",
+	/*{
+		accessorKey: "editorial",
 		header: "Editorial",
-		cell: ({ row }) => <div className="capitalize">{row.getValue("publisher")}</div>,
-	},
+		cell: ({ row }) => <div className="capitalize">{row.getValue("editorial")}</div>,
+	}, */
 	{
-		accessorKey: "rating",
+		accessorKey: "calificacion",
 		header: ({ column }) => (
 			<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
 				Valoración
 			</Button>
 		),
 		cell: ({ row }) => {
-			const amount = parseFloat(row.getValue("rating")) || parseFloat("0.0");
+			const amount = parseFloat(row.getValue("calificacion")) || parseFloat("0.0");
 			const icon = amount < 3.5 ? <Empty /> : amount < 4.5 ? <Half /> : <Filled />;
 			return (
 				<div className="flex text-right font-medium gap-2 pl-4">
@@ -116,8 +117,13 @@ export const columns: ColumnDef<Books>[] = [
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end" className="z-10">
 						<Card className="outline outline-slate-300 outline-1 outline-offset-0">
-							<DropdownMenuItem onClick={() => navigator.clipboard.writeText(books.name)} className="mt-4 mx-4">
-								<Toast trigger="Copiar título del libro" title="¡Título copiado con éxito!" action_bool={false} />
+							<DropdownMenuItem onClick={() => navigator.clipboard.writeText(books.titulo)} className="mt-4 mx-4">
+								<Toast 
+									book={books}
+									trigger="Copiar título del libro"
+									title="¡Título copiado con éxito!"
+									action_bool={false} 
+								/>
 							</DropdownMenuItem>
 							<hr className="h-px mx-4 w-auto text-center bg-gray-300 border-0 m-1" />
 							<DropdownMenuItem
@@ -128,12 +134,14 @@ export const columns: ColumnDef<Books>[] = [
 								className="flex gap-2 mx-4"
 							>
 								<Toast
+									book={books}
 									trigger="Eliminar"
 									title="¡Libro eliminado con éxito!"
 									action_bool={true}
 									action_message="Deshacer"
 									icon={<Trashcan />}
 								/>
+								
 							</DropdownMenuItem>
 
 							<Modal
