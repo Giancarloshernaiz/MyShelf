@@ -1,57 +1,37 @@
 import { z } from "zod";
 
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/*"];
 
-const author = ["name", "lastname", "birthdate", "deathdate"] as const;
-export type Authors = (typeof author)[number];
-export const mappedAuthors: {[key in Authors]: string} = {
-    name: "Nombre",
-    lastname: "Apellido",
-    birthdate: "Fecha de nacimiento",
-    deathdate: "Fecha de fallecimiento"
-}
+export const authorSchema = z.object({
+  name: z.string().min(3, { message: "Ingrese un nombre válido" }),
+  lastName: z.string().min(5, { message: "Ingrese un apellido válido" }),
+  birthDate: z.string().refine((date) => new Date(date).toString() !== "Invalid Date", {message: "Ingrese una fecha válida"}),
+  deathDate: z.string(),
+});
 
 export const BookRegisterSchema = z
   .object({
     
     cover:z
     .any()
-    .refine((file) => file?.size <=  5000000, `El tamaño máximo de la imágen es de 5MB.`)
+    .refine((file) => file?.size <=  50000000, `El tamaño máximo de la imágen es de 5MB.`)
     .refine(
       (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
       "Solo los formatos .jpg, .jpeg, .png and .webp son aceptados."
     ),
 
-    name: z
+    title: z
       .string()
-      .min(1, { message: "Campo requerido" })
-      .min(1, { message: "Minimo 1 carácter" })
-      .max(50, { message: "Maximo 50 carácteres" }),
+      .min(1, { message: "El campo no puede estar vacío" })
+      .max(50, { message: "Máximo 50 carácteres" }),
 
-    AuthorName: z
-      .string()
-      .min(1, { message: "Campo requerido" })
-      .min(1, { message: "Minimo 10 carácteres" })
-      .max(50, { message: "Maximo 50 carácteres" }),
-
-    AuthorLastName: z
-      .string()
-      .min(1, { message: "Campo requerido" })
-      .min(1, { message: "Minimo 10 carácteres" })
-      .max(50, { message: "Maximo 50 carácteres" }),
-    
-    AuthorBirthDate: z
-      .string()
-      .refine((date) => new Date(date).toString() !== "Invalid Date", {message: "Ingrese una fecha válida"}),
-
-    AuthorDeathDate: z
-      .string()
-      .refine((date) => new Date(date).toString() !== "Invalid Date", {message: "Ingrese una fecha válida"}),
+    authors: z
+    .array(authorSchema)
+    .min(1, { message: "Ingrese al menos un autor" }),
 
     genre: z
       .string()
-      .min(1, { message: "Campo requerido" })
-      .min(5, { message: "Minimo 5 carácteres" })
+      .min(1, { message: "El campo no puede estar vacío" })
       .max(50, { message: "Máximo de 50 carácteres" }),
 
     publishDate:z
@@ -60,8 +40,7 @@ export const BookRegisterSchema = z
 
     publisher: z
       .string()
-      .min(1, { message: "Campo requerido" })
-      .min(5, { message: "Minimo 5 carácteres" })
+      .min(1, { message: "El campo no puede estar vacío" })
       .max(50, { message: "Máximo de 50 carácteres" }),
 
     rating: z

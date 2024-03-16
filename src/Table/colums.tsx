@@ -7,14 +7,13 @@ import {
 	DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { Empty, Filled, Half } from "../Assets/SVG/Stars.tsx";
-import { Menu, SortArrow } from "../Assets/SVG/Icons.tsx";
+import { Menu, Pencil, SortArrow, Trashcan } from "../Assets/SVG/Icons.tsx";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card.tsx";
 import { ColumnDef } from "@tanstack/react-table";
 import Modal from "@/Form/Modal.tsx";
 import Toast from "@/Form/Toast.tsx";
-import { data } from "./DataTable.tsx";
 
 export type Books = {
 	id: string;
@@ -100,14 +99,14 @@ export const columns: ColumnDef<Books>[] = [
 		enableHiding: false,
 		cell: ({ row }) => {
 			const books = row.original;
-			const handleDelete = (id: string) => {
-				var index = data
-					.map(function (e) {
-						return e.id;
-					})
-					.indexOf(id);
-				data.splice(index, 1);
-			};
+			// const handleDelete = (id: string) => {
+			// 	var index = data
+			// 		.map(function (e: any) {
+			// 			return e.id;
+			// 		})
+			// 		.indexOf(id);
+			// 	data.splice(index, 1);
+			// };
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
@@ -118,16 +117,22 @@ export const columns: ColumnDef<Books>[] = [
 					<DropdownMenuContent align="end" className="z-10">
 						<Card className="outline outline-slate-300 outline-1 outline-offset-0">
 							<DropdownMenuItem onClick={() => navigator.clipboard.writeText(books.name)} className="mt-4 mx-4">
-								<Toast trigger="Copiar título del libro" title="¡Título copiado con éxito!" action_bool={false}></Toast>
+								<Toast trigger="Copiar título del libro" title="¡Título copiado con éxito!" action_bool={false} />
 							</DropdownMenuItem>
-							<hr className="h-px mx-4 w-auto text-center bg-gray-700 border-0 m-1" />
-
-							<DropdownMenuItem onClick={() => handleDelete(books.id)} className="mx-4">
+							<hr className="h-px mx-4 w-auto text-center bg-gray-300 border-0 m-1" />
+							<DropdownMenuItem
+								onClick={() =>
+									// handleDelete(books.id)
+									""
+								}
+								className="flex gap-2 mx-4"
+							>
 								<Toast
 									trigger="Eliminar"
 									title="¡Libro eliminado con éxito!"
 									action_bool={true}
 									action_message="Deshacer"
+									icon={<Trashcan />}
 								/>
 							</DropdownMenuItem>
 
@@ -138,7 +143,8 @@ export const columns: ColumnDef<Books>[] = [
 								}
 								submit={"Confirmar"}
 								value={"Editar"}
-								classname={"mx-4 mb-4 p-1 cursor-pointer hover:bg-slate-200/60"}
+								classname={"mx-4 mb-4 p-1 cursor-pointer hover:bg-slate-200/60 flex gap-4"}
+								icon={<Pencil />}
 							/>
 						</Card>
 					</DropdownMenuContent>

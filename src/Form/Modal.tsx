@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "@/Assets/SVG/Icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface Props {
@@ -21,25 +22,44 @@ interface Props {
 	description: string;
 	submit: string;
 	value: any;
+	icon?: any;
 	classname?: string;
 }
 
-type Inputs = {
-	cover: any;
-	title: string;
-	author: [name: string, lastname: string, birthdate: string, deathdate: string];
-	genre: string;
-	publishDate: string;
-	publisher: string;
-	rating: string;
+const REQUIRED_ERROR = "This field is required.";
+
+const useDynamicForm = () => {
+	const form = useForm<z.infer<typeof BookRegisterSchema>>({
+		resolver: zodResolver(BookRegisterSchema),
+		defaultValues: {
+			cover: "",
+			title: "",
+			genre: "",
+			publisher: "",
+			publishDate: "",
+			rating: "0",
+			authors: [
+				{
+					name: "",
+					lastName: "",
+					birthDate: "",
+					deathDate: "",
+				},
+			],
+		},
+	});
+
+	const onSubmit = (data: z.infer<typeof BookRegisterSchema>) => {
+		console.log(data);
+	};
 };
 
-export default function Modal({ title, description, submit, value, classname }: Props) {
+export default function Modal({ title, description, submit, value, classname, icon }: Props) {
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
-	} = useForm<Inputs>({
+	} = useForm<z.infer<typeof BookRegisterSchema>>({
 		resolver: zodResolver(BookRegisterSchema),
 	});
 
@@ -54,14 +74,17 @@ export default function Modal({ title, description, submit, value, classname }: 
 		}
 	}, [selectedImage]);
 
-	const onSubmit: SubmitHandler<Inputs> = (data) => {
+	const onSubmit: SubmitHandler<z.infer<typeof BookRegisterSchema>> = (data) => {
 		console.log(data);
 	};
 
 	return (
 		<Dialog>
 			<DialogTrigger asChild className={classname}>
-				<div>{value}</div>
+				<div>
+					{value}
+					{icon}
+				</div>
 			</DialogTrigger>
 			<DialogContent className="sm:max-w-[70%] h-[80vh]">
 				<DialogHeader className="px-3">
@@ -143,7 +166,7 @@ export default function Modal({ title, description, submit, value, classname }: 
 												id="first-name"
 												autoComplete="given-name"
 												className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-												{...register("author.0")}
+												{...register("authors")}
 											/>
 										</div>
 									</div>
@@ -158,7 +181,7 @@ export default function Modal({ title, description, submit, value, classname }: 
 												id="last-name"
 												autoComplete="family-name"
 												className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-												{...register("author.1")}
+												{...register("authors")}
 											/>
 										</div>
 									</div>
@@ -172,7 +195,7 @@ export default function Modal({ title, description, submit, value, classname }: 
 												type="date"
 												autoComplete="birth-date"
 												className=" w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-												{...register("author.2")}
+												{...register("authors")}
 											/>
 										</div>
 									</div>
@@ -186,20 +209,14 @@ export default function Modal({ title, description, submit, value, classname }: 
 												type="date"
 												autoComplete="death-date"
 												className=" w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-												{...register("author.3")}
+												{...register("authors")}
 											/>
 										</div>
 									</div>
 
 									<div className="mx-4">
 										<label className="block text-sm font-medium leading-6 text-gray-900">Agregar autor</label>
-										<button
-											type="button"
-											className="flex justify-center items-center mt-2"
-											onClick={() => {
-												console.log("A");
-											}}
-										>
+										<button type="button" className="flex justify-center items-center mt-2">
 											<Plus dimensions={32} />
 										</button>
 									</div>

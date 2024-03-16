@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import { Books, columns } from "./colums";
 import {
 	ColumnFiltersState,
@@ -18,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Modal from "@/Form/Modal";
 import { Plus } from "@/Assets/SVG/Icons";
+import { useState } from "react";
 
 function capitalizeFirstLetter(str: string) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
@@ -101,10 +100,10 @@ async function getData(): Promise<Books[]> {
 
 export const data = await getData();
 export default function DataTable() {
-	const [sorting, setSorting] = React.useState<SortingState>([]);
-	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-	const [rowSelection, setRowSelection] = React.useState({});
+	const [sorting, setSorting] = useState<SortingState>([]);
+	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+	const [rowSelection, setRowSelection] = useState({});
 
 	const table = useReactTable({
 		onSortingChange: setSorting,
@@ -124,14 +123,7 @@ export default function DataTable() {
 			rowSelection,
 		},
 	});
-	const handleDelete = (id: any) => {
-		var index = data
-			.map(function (e) {
-				return e.id;
-			})
-			.indexOf(id);
-		data.splice(index, 1);
-	};
+
 	return (
 		<div className="w-full flex flex-col justify-center items-center px-20 py-6 font-medium ">
 			<div className="min-w-full flex items-center justify-between gap-5 py-4">
