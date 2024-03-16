@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import instance from "@/axios/config";
+import useCustomHook from "@/Table/hook";
 
 interface Props {
 	book: any;
@@ -16,16 +17,17 @@ interface Props {
 
 export default function ToastWithAction({ book, trigger, title, description, action_bool, action_message, icon }: Props) {
 	const { toast } = useToast();
+	const { actualizar } = useCustomHook();
 
 	const createBook = (book: any) => {
 		instance.post("/libros", book).then((response) => {
-			console.log(response);
+			actualizar()
 		});
 	};
 
 	const deleteBook = (id: string) => {
 		instance.delete(`/libros/${id}`).then((response) => {
-			console.log(response);
+			actualizar()
 		});
 	
 	}

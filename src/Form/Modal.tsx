@@ -6,65 +6,30 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "@/components/ui/dialog";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-
-import { BookRegisterSchema } from "../Validators/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus } from "@/Assets/SVG/Icons";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import instance from "@/axios/config";
 
 interface Props {
 	title: string;
 	description: string;
+	actualizar: any;
 	submit: string;
 	value: any;
 	icon?: any;
 	classname?: string;
 }
 
-const REQUIRED_ERROR = "This field is required.";
-
-const useDynamicForm = () => {
-	const form = useForm<z.infer<typeof BookRegisterSchema>>({
-		resolver: zodResolver(BookRegisterSchema),
-		defaultValues: {
-			cover: "",
-			title: "",
-			genre: "",
-			publisher: "",
-			publishDate: "",
-			rating: "0",
-			authors: [
-				{
-					name: "",
-					lastName: "",
-					birthDate: "",
-					deathDate: "",
-				},
-			],
-		},
-	});
-
-	const onSubmit = (data: z.infer<typeof BookRegisterSchema>) => {
-		console.log(data);
-	};
-};
-
-export default function Modal({ title, description, submit, value, classname, icon }: Props) {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<z.infer<typeof BookRegisterSchema>>({
-		resolver: zodResolver(BookRegisterSchema),
-	});
+export default function Modal({ title, description, submit, value, classname, icon, actualizar }: Props) {
+	const { register, handleSubmit } = useForm();
 
 	const [selectedImage, setSelectedImage]: any = useState(null);
 	const [imageUrl, setImageUrl]: any = useState(null);
+	const [error, setError]:any = useState(false);
 
 	useEffect(() => {
 		if (selectedImage) {
@@ -72,9 +37,34 @@ export default function Modal({ title, description, submit, value, classname, ic
 		}
 	}, [selectedImage]);
 
-	const onSubmit: SubmitHandler<z.infer<typeof BookRegisterSchema>> = (data) => {
-		console.log(data);
-		alert('Submit')
+	useEffect(() => {
+		if(error){
+			setInterval(() => {
+				setError(false);
+			}, 3000)
+		}
+	}, [error])
+
+	const onSubmit = (data:any) => {
+
+		if (data.birthDate === ''){
+			alert(data.birthDate)
+			return setError(true);
+		}
+
+		console.log(data.birthDate.split('-'));
+		const autor = `${data.firstName} ${data.lastName} (${data.birthDate.split('-')[0]}-${data.deathDate? data.deathDate.split('-')[0] : 'Actualidad'})`;
+
+		data = {
+			autores: autor,
+			genero: data.genre,
+			titulo: data.title,
+			calificacion: data.rating,
+			imagen: selectedImage.name,
+			fecha_publicacion: data.publishDate
+		}
+		instance.post('/libros', data).then((res) => { setError(false); actualizar();}).catch((err) => {console.log(err);setError(true)})
+
 	};
 
 	return (
@@ -165,7 +155,7 @@ export default function Modal({ title, description, submit, value, classname, ic
 												id="first-name"
 												autoComplete="given-name"
 												className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-												{...register("authors")}
+												{...register("firstName")}
 											/>
 										</div>
 									</div>
@@ -180,7 +170,7 @@ export default function Modal({ title, description, submit, value, classname, ic
 												id="last-name"
 												autoComplete="family-name"
 												className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-												{...register("authors")}
+												{...register("lastName")}
 											/>
 										</div>
 									</div>
@@ -194,7 +184,7 @@ export default function Modal({ title, description, submit, value, classname, ic
 												type="date"
 												autoComplete="birth-date"
 												className=" w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-												{...register("authors")}
+												{...register("birthDate")}
 											/>
 										</div>
 									</div>
@@ -208,7 +198,7 @@ export default function Modal({ title, description, submit, value, classname, ic
 												type="date"
 												autoComplete="death-date"
 												className=" w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-												{...register("authors")}
+												{...register("deathDate")}
 											/>
 										</div>
 									</div>
@@ -275,6 +265,7 @@ export default function Modal({ title, description, submit, value, classname, ic
 						</div>
 						<div className="flex justify-center">
 							<Button type="submit">{submit}</Button>
+							{error? <span>Datos invalidos</span> : null}
 						</div>
 					</form>
 				</ScrollArea>

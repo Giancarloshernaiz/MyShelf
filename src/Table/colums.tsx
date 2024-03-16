@@ -14,7 +14,7 @@ import { Card } from "@/components/ui/card.tsx";
 import { ColumnDef } from "@tanstack/react-table";
 import Modal from "@/Form/Modal.tsx";
 import Toast from "@/Form/Toast.tsx";
-
+import useCustomHook from "./hook.tsx";
 
 export type Books = {
 	id: number;
@@ -26,6 +26,7 @@ export type Books = {
 	imagen: string;
 	calificacion: string;
 };
+
 
 export const columns: ColumnDef<Books>[] = [
 	{
@@ -108,7 +109,9 @@ export const columns: ColumnDef<Books>[] = [
 			// 		.indexOf(id);
 			// 	data.splice(index, 1);
 			// };
+			const actualizar = useCustomHook();
 			return (
+				
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="ghost" className="h-10 w-10 p-0">
@@ -153,6 +156,7 @@ export const columns: ColumnDef<Books>[] = [
 								value={"Editar"}
 								classname={"mx-4 mb-4 p-1 cursor-pointer hover:bg-slate-200/60 flex gap-4"}
 								icon={<Pencil />}
+								actualizar={actualizar}
 							/>
 						</Card>
 					</DropdownMenuContent>

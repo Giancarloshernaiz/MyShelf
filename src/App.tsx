@@ -26,7 +26,7 @@ export default function App() {
 					<h1 className="font-semibold text-2xl text-gray-500 text-center">
 						Libros que cambian vidas. Historias que te marcarán...
 					</h1>
-					<Table />
+					<Table/>
 					<Toaster />
 				</section>
 				<footer className="relative flex flex-col bg-black/15 backdrop-blur-sm gap-4 w-full bottom-0 h-[40vh]">

@@ -38,11 +38,12 @@ export const BookRegisterSchema = z
       .string()
       .refine((date) => new Date(date).toString() !== "Invalid Date", {message: "Ingrese una fecha válida"}),
 
-    publisher: z
+    /*publisher: z
       .string()
       .min(1, { message: "El campo no puede estar vacío" })
       .max(50, { message: "Máximo de 50 carácteres" }),
-
+    */
+   
     rating: z
       .string()
       .refine((num) => !isNaN(parseFloat(num)), {message: "La valoración debe ser un valor numérico"})

@@ -18,6 +18,7 @@ import Modal from "@/Form/Modal";
 import { Plus } from "@/Assets/SVG/Icons";
 import { useState, useEffect } from "react";
 import instance from "@/axios/config";
+import useCustomHook from "./hook";
 
 
 export default function DataTable() {
@@ -26,12 +27,13 @@ export default function DataTable() {
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [rowSelection, setRowSelection] = useState({});
 	const [data, setData] = useState<Books[]>([]);
+	const { actualizar } = useCustomHook()
 
 	useEffect(() => {
 		instance.get("/libros").then((response) => {
 			setData(response.data);
 		});
-	}, []);
+	}, [actualizar]);
 
 	const table = useReactTable({
 		onSortingChange: setSorting,
@@ -51,6 +53,7 @@ export default function DataTable() {
 			rowSelection,
 		},
 	});
+
 
 	return (
 		<div className="w-full flex flex-col justify-center items-center px-20 py-6 font-medium ">
@@ -77,6 +80,7 @@ export default function DataTable() {
 					}
 					submit="Agregar"
 					value={<Plus dimensions={28} />}
+					actualizar={actualizar}
 					classname="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground px-2 py-1"
 				/>
 			</div>
